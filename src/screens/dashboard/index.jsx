@@ -1,7 +1,36 @@
-import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
-
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
+import { isUserAvailable, auth } from "../../config/firebase";
+import { signOut } from "firebase/auth";
 const Dashboard = ({ navigation }) => {
+  const [email, setEmail] = useState();
+
+  useEffect(() => {
+    isUserAvailable(setEmail);
+  }, []);
+
+  const handlelogout = () => {
+    if (email) {
+      signOut(auth)
+        .then(() => {
+          Alert.alert("User LogOut");
+          setEmail(false);
+        })
+        .catch((error) => {
+          return { error: false };
+        });
+    } else {
+      navigation.navigate("loginoption");
+    }
+  };
+
   return (
     <View style={styles.body}>
       <Image
@@ -9,9 +38,16 @@ const Dashboard = ({ navigation }) => {
         source={require("../../../assets/olx_logo.png")}
       />
       <Text style={[styles.heading, styles.common]}>Welcome to Dashboard</Text>
-      <TouchableOpacity onPress={() => navigation.navigate("loginoption")}>
-        <Text style={[styles.para, styles.common]}>login</Text>
-      </TouchableOpacity>
+      <Text style={[styles.heading, styles.common]}>{email}</Text>
+      {email ? (
+        <TouchableOpacity onPress={() => handlelogout()}>
+          <Text style={[styles.para, styles.common]}>LogOut</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity onPress={() => handlelogout()}>
+          <Text style={[styles.para, styles.common]}>LogIn</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

@@ -7,14 +7,30 @@ import {
   TextInput,
   Pressable,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { userSignUp } from "../../config/firebase";
 
-const Signup = ({navigation}) => {
+const Signup = ({ navigation }) => {
   const [userName, setUserName] = React.useState();
   const [email, setEmail] = React.useState();
-  const [Password, setPassword] = React.useState();
+  const [password, setPassword] = React.useState();
   const [ConPassword, setConPassword] = React.useState();
+
+  const handleSignUp = async () => {
+    if (password === ConPassword) {
+      const resp = await userSignUp(userName, email, password);
+      if (resp.error) {
+        Alert.alert(resp.message);
+        navigation.navigate("login");
+      } else {
+        Alert.alert(resp.message);
+      }
+    } else {
+      Alert.alert("password not match");
+    }
+  };
 
   return (
     <KeyboardAwareScrollView style={styles.body}>
@@ -41,7 +57,7 @@ const Signup = ({navigation}) => {
         <TextInput
           style={styles.input}
           onChangeText={setPassword}
-          value={Password}
+          value={password}
           placeholder="Password"
           secureTextEntry={true}
         />
@@ -53,12 +69,14 @@ const Signup = ({navigation}) => {
           placeholder="Password"
           secureTextEntry={true}
         />
-        <Pressable style={styles.button} onPress={() => navigation.navigate("login")}>
+        <Pressable style={styles.button} onPress={() => handleSignUp()}>
           <Text style={styles.buttonText}>SignUp</Text>
         </Pressable>
-      <TouchableOpacity onPress={() => navigation.navigate("login")}>
-      <Text style={[styles.para, styles.common]}>Or Already have an account!</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("login")}>
+          <Text style={[styles.para, styles.common]}>
+            Or Already have an account!
+          </Text>
+        </TouchableOpacity>
       </View>
     </KeyboardAwareScrollView>
   );
@@ -110,6 +128,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     marginTop: 15,
     fontWeight: "500",
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

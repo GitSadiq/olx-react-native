@@ -7,12 +7,24 @@ import {
   TextInput,
   Pressable,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { userLogin } from "../../config/firebase";
 
-const Login = ({navigation}) => {
+const Login = ({ navigation }) => {
   const [email, setEmail] = React.useState();
-  const [Password, setPassword] = React.useState();
+  const [password, setPassword] = React.useState();
+
+  const handlelogin = async () => {
+    const resp = await userLogin(email, password);
+    if (resp.error) {
+      Alert.alert(resp.message);
+      navigation.navigate("dashboard");
+    } else {
+      Alert.alert(resp.message);
+    }
+  };
 
   return (
     <KeyboardAwareScrollView style={styles.body}>
@@ -32,15 +44,17 @@ const Login = ({navigation}) => {
         <TextInput
           style={styles.input}
           onChangeText={setPassword}
-          value={Password}
+          value={password}
           placeholder="Password"
           secureTextEntry={true}
         />
-        <Pressable style={styles.button} onPress={() => navigation.navigate("dashboard")}>
+        <Pressable style={styles.button} onPress={() => handlelogin()}>
           <Text style={styles.buttonText}>Login</Text>
         </Pressable>
         <TouchableOpacity onPress={() => navigation.navigate("signup")}>
-          <Text style={[styles.para, styles.common]}>Or Create an account!</Text>
+          <Text style={[styles.para, styles.common]}>
+            Or Create an account!
+          </Text>
         </TouchableOpacity>
       </View>
     </KeyboardAwareScrollView>
@@ -80,7 +94,7 @@ const styles = StyleSheet.create({
     marginTop: 60,
     justifyContent: "center",
     alignItems: "center",
-    padding: 10,
+    padding: 8,
     borderRadius: 4,
     backgroundColor: "#003f34",
   },

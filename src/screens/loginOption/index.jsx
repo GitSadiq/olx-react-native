@@ -1,8 +1,13 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { loginGoogle } from "../../config/firebase";
 
 const Loginoption = ({navigation}) => {
 
+  const handlegoogle =  () => {
+    console.log("login option")
+     loginGoogle()
+  }
   return (
     <View style={styles.body}>
       <Image
@@ -13,9 +18,11 @@ const Loginoption = ({navigation}) => {
       <Text style={[styles.normal, styles.common]}>
         The trusted community of buyers and sellers
       </Text>
-      <View style={styles.selectOption}>
+      <TouchableOpacity onPress={() => handlegoogle()}>
+      <View style={styles.selectOption} >
         <Text style={styles.placeholder}>Continue with Google</Text>
       </View>
+      </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate("login")}>
         <View style={styles.selectOption}>
           <Text style={styles.placeholder}>Continue with Email</Text>

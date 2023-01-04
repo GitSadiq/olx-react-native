@@ -9,7 +9,7 @@ export default function Navigate () {
 
         return(
             <NavigationContainer>
-                <stack.Navigator>
+                <stack.Navigator initialRouteName="dashboard">
                     <stack.Screen name="loginoption" component={Loginoption}/>
                     <stack.Screen name="signup" component={Signup}/>
                     <stack.Screen name="login" component={Login}/>
