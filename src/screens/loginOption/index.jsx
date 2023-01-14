@@ -2,12 +2,11 @@ import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { loginGoogle } from "../../config/firebase";
 
-const Loginoption = ({navigation}) => {
-
-  const handlegoogle =  () => {
-    console.log("login option")
-     loginGoogle()
-  }
+const Loginoption = ({ navigation }) => {
+  const handlegoogle = () => {
+    console.log("login option");
+    loginGoogle();
+  };
   return (
     <View style={styles.body}>
       <Image
@@ -18,17 +17,17 @@ const Loginoption = ({navigation}) => {
       <Text style={[styles.normal, styles.common]}>
         The trusted community of buyers and sellers
       </Text>
-      <TouchableOpacity onPress={() => handlegoogle()}>
-      <View style={styles.selectOption} >
-        <Text style={styles.placeholder}>Continue with Google</Text>
-      </View>
-      </TouchableOpacity>
+      {/* <TouchableOpacity onPress={() => handlegoogle()}>
+        <View style={styles.selectOption}>
+          <Text style={styles.placeholder}>Continue with Google</Text>
+        </View>
+      </TouchableOpacity> */}
       <TouchableOpacity onPress={() => navigation.navigate("login")}>
         <View style={styles.selectOption}>
           <Text style={styles.placeholder}>Continue with Email</Text>
         </View>
       </TouchableOpacity>
-      <View style={{ flex: 2, justifyContent: "flex-end", paddingBottom: 20 }}>
+      <View style={{ flex: 1, justifyContent: "flex-end", paddingBottom: 20 }}>
         <Text style={[styles.common]}>
           If you continue, you are accepting OLX Terms and Condition and Privacy
           Policy
@@ -44,8 +43,9 @@ const styles = StyleSheet.create({
   body: {
     backgroundColor: "#fff",
     flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    paddingTop: 100,
+    paddingTop: 220,
     color: "#003f34",
   },
   image_logo: {
@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
     color: "#003f34",
     textAlign: "center",
     marginTop: 5,
+    padding: 10,
   },
   policy: {
     alignSelf: "flex-end",
@@ -78,6 +79,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   placeholder: {
+    textAlign: "center",
     fontSize: 20,
     color: "#003f34",
   },

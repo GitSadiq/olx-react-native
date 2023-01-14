@@ -9,21 +9,16 @@ import {
   Alert,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import AdImage from "../../components/home/ImageAd";
-import Products from "../../components/home/products";
 
-const Dashboard = () => {
+const CreateAd = () => {
   return (
     <ScrollView style={[styles.body, styles.border]}>
-      <NavBarIcon />
-      <Search />
-      <AdImage />
-      <Products />
+      <Input>asjn</Input>
     </ScrollView>
   );
 };
 
-export default Dashboard;
+export default CreateAd;
 
 const styles = StyleSheet.create({
   body: {
