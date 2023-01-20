@@ -8,11 +8,60 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+import { getAllData } from "../../config/firebase";
 
 const Products = () => {
+  const [products, setProducts] = useState();
+  let resp;
+  const CallData = async () => {
+    resp = await getAllData();
+    setProducts(resp.allAds);
+    console.log(products);
+  };
+
+  useEffect(() => {
+    CallData();
+  }, [resp]);
+
   return (
     <View style={[styles.productsBody]}>
-      <View style={[styles.row]}>
+      {products ? (
+        products.map((item, index) => {
+          console.log(item);
+          return (
+            <View key={index} style={[styles.row]}>
+              <View style={styles.card}>
+                <Image
+                  style={[styles.cardImage]}
+                  source={{ uri: item.productImage }}
+                ></Image>
+                <View style={[styles.contentCard]}>
+                  <Text style={[styles.titleCard]}>{item.productTitle}</Text>
+                  <Text style={[styles.priceCard]}>{item.productPrice}</Text>
+                </View>
+              </View>
+              {/* <View style={styles.card}>
+                <Image
+                  style={[styles.cardImage]}
+                  source={require("../../../assets/p4.jpg")}
+                ></Image>
+                <View style={[styles.contentCard]}>
+                  <Text style={[styles.titleCard]}>
+                    KJBdksjb nlanlsnlasnlns ,nasnl ajsnl kjskd ksjdnkj skjnd
+                    sndjn snjdn
+                  </Text>
+                  <Text style={[styles.priceCard]}>RS: 300</Text>
+                </View>
+              </View> */}
+            </View>
+          );
+        })
+      ) : (
+        // <></>
+        <></>
+      )}
+
+      {/* <View style={[styles.row]}>
         <View style={styles.card}>
           <Image
             style={[styles.cardImage]}
@@ -39,35 +88,7 @@ const Products = () => {
             <Text style={[styles.priceCard]}>RS: 300</Text>
           </View>
         </View>
-      </View>
-      <View style={[styles.row]}>
-        <View style={styles.card}>
-          <Image
-            style={[styles.cardImage]}
-            source={require("../../../assets/p1.jpg")}
-          ></Image>
-          <View style={[styles.contentCard]}>
-            <Text style={[styles.titleCard]}>
-              KJBdksjb nlanlsnlasnlns ,nasnl ajsnl kjskd ksjdnkj skjnd sndjn
-              snjdn
-            </Text>
-            <Text style={[styles.priceCard]}>RS: 300</Text>
-          </View>
-        </View>
-        <View style={styles.card}>
-          <Image
-            style={[styles.cardImage]}
-            source={require("../../../assets/p4.jpg")}
-          ></Image>
-          <View style={[styles.contentCard]}>
-            <Text style={[styles.titleCard]}>
-              KJBdksjb nlanlsnlasnlns ,nasnl ajsnl kjskd ksjdnkj skjnd sndjn
-              snjdn
-            </Text>
-            <Text style={[styles.priceCard]}>RS: 300</Text>
-          </View>
-        </View>
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -93,7 +114,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   card: {
-    width: "46%",
+    width: "90%",
     height: 300,
     borderRadius: 5,
     backgroundColor: "white",

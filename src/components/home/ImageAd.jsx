@@ -18,6 +18,12 @@ const AdImage = () => {
       <Image
         style={styles.AdImage}
         source={require("../../../assets/Nimg.webp")}
+        // source={{
+        //   uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1200px-Image_created_with_a_mobile_phone.png",
+        // }}
+        // source={{
+        //   uri: "https://firebasestorage.googleapis.com/v0/b/sk-olx-app.appspot.com/o/images%2F9e4eee02-c95c-43f2-abc4-ee9d4dc991a0.jpeg?alt=media&token=c90aba4c-df48-40f8-9132-6018ce57d235",
+        // }}
       ></Image>
       <Text style={styles.heading}>Browse Categories</Text>
       <View style={[styles.IconView]}>

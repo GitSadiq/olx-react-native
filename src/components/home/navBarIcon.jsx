@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
   border: {
     borderWidth: 2,
     borderColor: "black",
+    position: "relative",
   },
   topNav: {
     flex: 1 / 10,

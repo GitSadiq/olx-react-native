@@ -14,12 +14,15 @@ import Products from "../../components/home/products";
 
 const Dashboard = () => {
   return (
-    <ScrollView style={[styles.body, styles.border]}>
-      <NavBarIcon />
-      <Search />
-      <AdImage />
-      <Products />
-    </ScrollView>
+    <>
+      <View style={[styles.topFixed, styles.border]}></View>
+      <ScrollView style={[styles.body, styles.border]}>
+        <NavBarIcon />
+        <Search />
+        <AdImage />
+        <Products />
+      </ScrollView>
+    </>
   );
 };
 
@@ -30,10 +33,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     flex: 1,
     color: "#003f34",
-    paddingTop: 50,
+    paddingTop: 10,
   },
-  // border: {
-  //   borderWidth: 2,
-  //   borderColor: "black",
-  // },
+  topFixed: {
+    height: 40,
+  },
 });

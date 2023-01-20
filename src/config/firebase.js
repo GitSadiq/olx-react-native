@@ -9,6 +9,7 @@ import {
   signInWithRedirect,
   getRedirectResult,
 } from "firebase/auth";
+
 import {
   getFirestore,
   query,
@@ -20,6 +21,8 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
+
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDfe-BO1TeZle1iAIVBDXvYyClFYgeDTow",
@@ -33,8 +36,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
-console.log(provider);
+const storage = getStorage(app);
 
 async function userSignUp(username, email, password) {
   try {
@@ -77,33 +79,57 @@ const isUserAvailable = (setemail) => {
   });
 };
 
-const loginGoogle = () => {
-  console.log("yahan tw call hona chahiye");
+async function getImageURL(imageData) {
+  const fileName = imageData.uri.split("/").pop();
   try {
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        console.log("ye chala");
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        // ...
-      })
-      .catch((error) => {
-        console.log("ya ye chala");
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
-      });
-  } catch (err) {
-    console.log("here is error", err);
+    const imageRef = ref(storage, "images/" + fileName);
+    const img = await fetch(imageData.uri);
+    const bytes = await img.blob();
+    const res = await uploadBytes(imageRef, bytes);
+    const url = await getDownloadURL(res.ref);
+    return url;
+  } catch (error) {
+    console.log("error", error.message);
+  }
+}
+
+const createAds = async (values) => {
+  console.log(values);
+  try {
+    const response = await addDoc(collection(db, "AdsDetails"), values);
+    const updateAdsDetails = doc(db, "AdsDetails", response.id);
+    await updateDoc(updateAdsDetails, {
+      docId: response.id,
+    });
+  } catch (error) {
+    alert("Error", error.message);
   }
 };
 
-export { userSignUp, userLogin, isUserAvailable, loginGoogle, auth };
+const getAllData = async () => {
+  try {
+    const q = query(collection(db, "AdsDetails"));
+    const querySnapshot = await getDocs(q);
+    let copyArray = [];
+    querySnapshot.forEach((doc) => {
+      copyArray.push(doc.data());
+    });
+    return {
+      error: false,
+      message: "load ads successfully from firebase",
+      allAds: copyArray,
+    };
+  } catch (error) {
+    return { error: false, message: error.message, allAds: [] };
+  }
+};
+
+export {
+  userSignUp,
+  userLogin,
+  isUserAvailable,
+  getImageURL,
+  createAds,
+  getAllData,
+  auth,
+};
