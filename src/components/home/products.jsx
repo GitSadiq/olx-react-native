@@ -8,26 +8,38 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { getAllData } from "../../config/firebase";
+import { async } from "@firebase/util";
 
 const Products = () => {
+  const navigate = useNavigation();
+  const key = navigate.getState().history[0].key.split("-")[0];
+
   const [products, setProducts] = useState();
-  let resp;
+
   const CallData = async () => {
-    resp = await getAllData();
+    let resp = await getAllData();
     setProducts(resp.allAds);
-    console.log(products);
   };
 
-  useEffect(() => {
-    CallData();
-  }, [resp]);
+  useFocusEffect(
+    React.useCallback(() => {
+      async function fetchData() {
+        let resp = await getAllData();
+        setProducts(resp.allAds);
+      }
+      fetchData();
+    }, [])
+  );
+
+  console.log("navigationss", key);
 
   return (
     <View style={[styles.productsBody]}>
       {products ? (
         products.map((item, index) => {
-          console.log(item);
+          // console.log(item);
           return (
             <View key={index} style={[styles.row]}>
               <View style={styles.card}>
@@ -40,24 +52,10 @@ const Products = () => {
                   <Text style={[styles.priceCard]}>{item.productPrice}</Text>
                 </View>
               </View>
-              {/* <View style={styles.card}>
-                <Image
-                  style={[styles.cardImage]}
-                  source={require("../../../assets/p4.jpg")}
-                ></Image>
-                <View style={[styles.contentCard]}>
-                  <Text style={[styles.titleCard]}>
-                    KJBdksjb nlanlsnlasnlns ,nasnl ajsnl kjskd ksjdnkj skjnd
-                    sndjn snjdn
-                  </Text>
-                  <Text style={[styles.priceCard]}>RS: 300</Text>
-                </View>
-              </View> */}
             </View>
           );
         })
       ) : (
-        // <></>
         <></>
       )}
 

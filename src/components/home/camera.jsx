@@ -1,39 +1,40 @@
 import { Camera, CameraType } from "expo-camera";
-import { useState } from "react";
-import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useState, useRef } from "react";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+} from "react-native";
 import { useIsFocused } from "@react-navigation/native";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Entypo from "react-native-vector-icons/Entypo";
+import Video from "react-native-video";
 
 function CameraView() {
   const [type, setType] = useState(CameraType.back);
-  const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [cameraPermission, requestPermission] = Camera.useCameraPermissions();
+  const [microPhonePermission, setMicroPhonePermission] =
+    Camera.useMicrophonePermissions();
+  const [currentPhoto, setCurrentPhoto] = useState();
+  const [currentVideo, setCurrentVideo] = useState();
+  const [match, setMatch] = useState(false);
+  const camera = useRef(null);
 
-  if (!permission) {
+  // console.log(cameraPermission, microPhonePermission);
+
+  if (!cameraPermission) {
     // Camera permissions are still loading
     return <View />;
   }
 
-  if (!permission.granted) {
-    // Camera permissions are not granted yet
-    return (
-      <View style={styles.container}>
-        <Text
-          style={{
-            textAlign: "center",
-            fontSize: 20,
-            padding: 20,
-            color: "#003f34",
-          }}
-        >
-          We need your permission to show the camera
-        </Text>
-        <Button
-          color="#003f34"
-          onPress={requestPermission}
-          title="grant permission"
-        />
-      </View>
-    );
-  }
+  const permission = async () => {
+    const respCamera = await requestPermission();
+    const microCamera = await setMicroPhonePermission();
+    // console.log("resp", respCamera, microCamera);
+  };
 
   function toggleCameraType() {
     setType((current) =>
@@ -41,49 +42,156 @@ function CameraView() {
     );
   }
 
+  const snap = async () => {
+    const photo = await camera.current.takePictureAsync();
+    console.log("photo ===>", photo);
+    setCurrentPhoto(photo.uri);
+  };
+
+  const record = async () => {
+    const resp = await camera.current.recordAsync();
+    console.log("record", resp.uri);
+  };
+
+  const flag = () => {
+    if (match) {
+      setMatch(false);
+    } else {
+      setMatch(true);
+    }
+  };
+
+  if (!cameraPermission.granted) {
+    // Camera permissions are not granted yet
+    return (
+      <View style={styles.containerPremisson}>
+        <Text style={styles.permission}>
+          We need your permission to show the camera
+        </Text>
+        <Button
+          style={[styles.permission]}
+          color="#003f34"
+          onPress={permission}
+          title="grant permission"
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} type={type}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
-            <Text style={styles.text}>Flip Camera</Text>
+      <Camera ref={camera} style={styles.camera} type={type}></Camera>
+      <View style={styles.buttonContainer}>
+        <View style={styles.switch}>
+          <TouchableOpacity style={styles.switchTouch} onPress={flag}>
+            <Text style={!match ? styles.text : styles.textHover}>Photo</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.switchTouch} onPress={flag}>
+            <Text style={!match ? styles.textHover : styles.text}>video</Text>
           </TouchableOpacity>
         </View>
-      </Camera>
+        <View style={styles.buttonView}>
+          <TouchableOpacity style={styles.button}>
+            <Image style={styles.Image} source={{ uri: currentPhoto }}></Image>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={!match ? snap : record}
+          >
+            <Entypo style={styles.icon} name={"circle"} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
+            <MaterialCommunityIcons
+              name={"rotate-3d-variant"}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 }
 
 export default function CameraFeature() {
   const isFocused = useIsFocused();
-  console.log(isFocused);
+  // console.log(isFocused);
   return isFocused && <CameraView />;
 }
 
 const styles = StyleSheet.create({
-  container: {
+  containerPremisson: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
+  permission: {
+    textAlign: "center",
+    fontSize: 20,
+    padding: 20,
+    color: "#003f34",
+  },
+  container: {
+    flex: 10,
+  },
   camera: {
-    flex: 1,
-    width: "100%",
+    flex: 8 / 10,
+    marginTop: 50,
   },
   buttonContainer: {
+    flex: 2 / 10,
+    backgroundColor: "black",
+    flexDirection: "column",
+  },
+  switch: {
     flex: 1,
     flexDirection: "row",
-    backgroundColor: "transparent",
-    margin: 64,
+    alignItems: "center",
+  },
+  switchTouch: {
+    flex: 1,
+    paddingStart: 30,
+    paddingEnd: 30,
+  },
+  text: {
+    flex: 7 / 10,
+    color: "black",
+    borderRadius: 10,
+    fontSize: 20,
+    lineHeight: 34,
+    backgroundColor: "white",
+    textAlign: "center",
+  },
+  textHover: {
+    flex: 7 / 10,
+    color: "white",
+    borderRadius: 10,
+    fontSize: 20,
+    borderWidth: 2,
+    borderColor: "white",
+    textAlign: "center",
+    lineHeight: 34,
+    backgroundColor: "black",
+  },
+  buttonView: {
+    flexDirection: "row",
   },
   button: {
     flex: 1,
-    alignSelf: "flex-end",
+    padding: 10,
+    justifyContent: "center",
     alignItems: "center",
   },
-  text: {
-    fontSize: 24,
+  icon: {
+    fontSize: 60,
     fontWeight: "bold",
-    color: "white",
+    color: "#ffff",
+    textAlign: "center",
+  },
+  Image: {
+    flex: 1,
+    borderWidth: 2,
+    borderColor: "white",
+    width: "80%",
+    height: "100%",
   },
 });
